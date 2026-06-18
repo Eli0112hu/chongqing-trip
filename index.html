@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>重庆 1 晚 · 夜景优先</title>
+<meta name="description" content="6人家庭出行，80岁老人同行，不吃辣，夜景优先。6/25晚落地，6/26晚高铁去成都。">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root {
+  --bg-primary:    #ffffff;
+  --bg-secondary:  #f5f5f7;
+  --bg-tertiary:   #fbfbfd;
+  --bg-grouped:    #f2f2f7;
+  --bg-elevated:   #ffffff;
+  --text-primary:   #1d1d1f;
+  --text-secondary: #86868b;
+  --text-tertiary:  #aeaeb2;
+  --accent:        #e8532e;
+  --accent-hover:  #d14420;
+  --tint-red:    #e8532e;
+  --tint-orange: #ff9500;
+  --tint-green:  #34c759;
+  --tint-blue:   #007aff;
+  --tint-purple: #af52de;
+  --tint-pink:   #ff2d55;
+  --separator:  rgba(60, 60, 67, .12);
+  --shadow-sm:  0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:  0 4px 14px rgba(0,0,0,.08);
+  --shadow-lg:  0 8px 30px rgba(0,0,0,.12);
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  20px;
+  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+               "Helvetica Neue", "Arial", sans-serif;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.47059;
+  letter-spacing: -0.022em;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+#map { width: 100%; height: 40vh; min-height: 280px; position: sticky; top: 0; z-index: 100; }
+.locate-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: rgba(255,255,255,.92); backdrop-filter: blur(8px);
+  border: none; box-shadow: 0 1px 4px rgba(0,0,0,.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; cursor: pointer;
+}
+.locate-btn.active { color: #007aff; }
+@keyframes loc-pulse {
+  0%   { transform: scale(1); opacity: .55; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.loc-pulse {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: rgba(0,122,255,.25);
+  animation: loc-pulse 1.6s ease-out infinite;
+}
+
+.tabs {
+  display: flex; gap: 6px; padding: 12px 16px; overflow-x: auto;
+  background: rgba(255,255,255,.85); backdrop-filter: saturate(180%) blur(20px);
+  position: sticky; top: 40vh; z-index: 99;
+  border-bottom: .5px solid var(--separator); scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex-shrink: 0; padding: 7px 16px; border-radius: 980px; border: none;
+  background: var(--bg-grouped); color: var(--text-secondary);
+  font-size: 14px; font-weight: 500; cursor: pointer; transition: all .25s ease;
+  white-space: nowrap;
+}
+.tab:active { transform: scale(.96); }
+.tab.active { background: var(--accent); color: #fff; }
+
+.content { max-width: 680px; margin: 0 auto; padding: 16px 16px calc(24px + var(--safe-bottom)); }
+
+.hero { text-align: center; padding: 28px 20px 20px; }
+.hero h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.15; }
+.hero .subtitle { font-size: 17px; color: var(--text-secondary); margin-top: 6px; font-weight: 400; }
+
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.info-card { background: var(--bg-elevated); border-radius: var(--radius-lg); padding: 16px; box-shadow: var(--shadow-sm); }
+.info-card .label { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .02em; margin-bottom: 6px; }
+.info-card .value { font-size: 15px; font-weight: 600; line-height: 1.4; }
+
+.section-head { font-size: 13px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .03em; padding: 20px 0 8px; }
+
+.day-head { padding: 20px 0 12px; }
+.day-head h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+.day-head p { font-size: 15px; color: var(--text-secondary); margin-top: 2px; }
+
+.route-bar { background: var(--bg-elevated); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 14px; box-shadow: var(--shadow-sm); font-size: 13px; color: var(--text-secondary); line-height: 1.7; white-space: pre-line; }
+.route-bar strong { color: var(--text-primary); }
+
+.timeline { position: relative; padding-left: 24px; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 20px; bottom: 20px; width: 1.5px; background: var(--separator); }
+.tl-item { position: relative; margin-bottom: 10px; }
+.tl-dot { position: absolute; left: -20px; top: 18px; width: 10px; height: 10px; border-radius: 50%; z-index: 1; box-shadow: 0 0 0 3px var(--bg-secondary); }
+.tl-dot.food    { background: var(--tint-red); }
+.tl-dot.spot    { background: var(--tint-blue); }
+.tl-dot.hotel   { background: var(--tint-orange); }
+.tl-dot.drink   { background: var(--tint-purple); }
+.tl-dot.transport { background: var(--text-tertiary); }
+
+.card { background: var(--bg-elevated); border-radius: var(--radius-md); padding: 14px 16px; box-shadow: var(--shadow-sm); transition: box-shadow .25s ease; cursor: pointer; }
+.card:active { box-shadow: var(--shadow-md); }
+.card .time { font-size: 12px; font-weight: 600; color: var(--text-tertiary); letter-spacing: .01em; }
+.card .name { font-size: 17px; font-weight: 600; margin: 2px 0 4px; letter-spacing: -0.01em; display: flex; align-items: center; gap: 6px; }
+.card .desc { font-size: 14px; color: var(--text-secondary); line-height: 1.45; }
+
+.badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 4px; }
+.badge.food   { background: rgba(232,83,46,.1);  color: var(--tint-red); }
+.badge.spot   { background: rgba(0,122,255,.1);  color: var(--tint-blue); }
+.badge.drink  { background: rgba(175,82,222,.1); color: var(--tint-purple); }
+.badge.veg    { background: rgba(52,199,89,.1);  color: var(--tint-green); }
+
+.budget { display: inline-block; margin-top: 6px; padding: 3px 10px; background: var(--bg-grouped); border-radius: var(--radius-sm); font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+
+.pays { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+.pay { font-size: 11px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
+.pay.ok  { background: rgba(52,199,89,.1);  color: var(--tint-green); }
+.pay.no  { background: rgba(255,59,48,.08); color: var(--tint-red); }
+.pay.idk { background: rgba(255,149,0,.1);  color: var(--tint-orange); }
+
+.links { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600; border: none; cursor: pointer;
+  text-decoration: none !important; transition: filter .2s;
+}
+.btn:active { filter: brightness(.9); }
+.btn.nav    { background: var(--accent); color: #fff; }
+.btn.xhs    { background: #ff2442; color: #fff; }
+.btn.dp     { background: #ffa700; color: #fff; }
+.btn.rsv    { background: var(--tint-green); color: #fff; }
+
+.as-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,.35); backdrop-filter: blur(2px);
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.as-overlay.show { opacity: 1; pointer-events: auto; }
+.as-sheet {
+  width: 100%; max-width: 420px;
+  padding: 0 8px 34px;
+  transform: translateY(100%); transition: transform .3s cubic-bezier(.22,1,.36,1);
+}
+.as-overlay.show .as-sheet { transform: translateY(0); }
+.as-group {
+  background: rgba(255,255,255,.88); backdrop-filter: blur(20px);
+  border-radius: 14px; overflow: hidden; margin-bottom: 8px;
+}
+.as-group .as-item {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 16px; font-size: 18px; color: #007aff; font-weight: 500;
+  border: none; background: none; width: 100%; cursor: pointer;
+}
+.as-group .as-item + .as-item { border-top: .5px solid rgba(0,0,0,.12); }
+.as-group .as-item:active { background: rgba(0,0,0,.06); }
+.as-cancel { font-weight: 600; }
+
+.details {
+  margin-top: 10px; padding-top: 10px;
+  border-top: .5px solid var(--separator);
+  font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+}
+.details.closed { display: none; }
+
+.day-list .card { margin-bottom: 8px; }
+.day-list .card .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+
+.pay-summary { background: var(--bg-elevated); border-radius: var(--radius-md); padding: 14px 16px; box-shadow: var(--shadow-sm); font-size: 13px; line-height: 1.7; margin-bottom: 10px; }
+.pay-summary h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.pay-summary .warn { color: var(--tint-red); }
+.pay-summary .ok-text { color: var(--tint-green); }
+
+.legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 8px 0; font-size: 12px; color: var(--text-secondary); }
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+.leaflet-popup-content-wrapper { border-radius: var(--radius-md) !important; box-shadow: var(--shadow-lg) !important; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif !important; }
+.leaflet-popup-content { font-size: 14px !important; line-height: 1.5 !important; margin: 12px 14px !important; }
+.leaflet-popup-content a { color: var(--accent) !important; }
+.leaflet-popup-tip { background: #fff !important; }
+.leaflet-control-zoom a { width: 34px !important; height: 34px !important; line-height: 34px !important; font-size: 16px !important; border-radius: 10px !important; background: rgba(255,255,255,.85) !important; backdrop-filter: blur(10px) !important; border: .5px solid var(--separator) !important; color: var(--text-primary) !important; }
+.leaflet-control-zoom { border-radius: 12px !important; overflow: hidden; box-shadow: var(--shadow-md) !important; border: none !important; }
+.leaflet-control-attribution { font-size: 9px !important; opacity: .5; }
+
+.restaurant-section { margin-top: 16px; }
+.restaurant-section h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.restaurant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.restaurant-card { background: var(--bg-elevated); border-radius: var(--radius-md); padding: 12px; box-shadow: var(--shadow-sm); }
+.restaurant-card .rname { font-size: 15px; font-weight: 600; }
+.restaurant-card .rdesc { font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.5; }
+.restaurant-card .rtag { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-top: 6px; margin-right: 4px; font-weight: 600; }
+.rtag.recommend { background: rgba(232,83,46,.1); color: var(--tint-red); }
+.rtag.veg-friendly { background: rgba(52,199,89,.1); color: var(--tint-green); }
+.rtag.hotpot { background: rgba(255,149,0,.1); color: var(--tint-orange); }
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+<div class="tabs" id="tabs"></div>
+<div class="content" id="content"></div>
+
+<script>
+const HOTEL = {
+  name: '桔子重庆解放碑洪崖洞江景酒店',
+  lat: 29.5630,
+  lng: 106.5780
+};
+
+const DAYS = [
+  { id: 0, label: '总览', color: '#e8532e', locations: [] },
+  {
+    id: 1,
+    label: 'D1 抵达',
+    date: '6月25日 周三',
+    title: '深夜落地 · 洪崖洞夜景',
+    color: '#ff9500',
+    locations: [
+      { name: '重庆江北机场T3', lat: 29.7192, lng: 106.6417, type: 'transport', time: '22:25', desc: '天津航空 GS6582 杭州萧山→重庆江北，落地即走', gmap: '重庆江北国际机场T3' },
+      { name: '桔子解放碑洪崖洞江景酒店', lat: 29.5630, lng: 106.5780, type: 'hotel', time: '23:00', desc: '打车约40分钟，6人需2辆车。江景家庭房+江景大床房', gmap: '桔子酒店解放碑洪崖洞' },
+      { name: '洪崖洞夜景', lat: 29.5647, lng: 106.5812, type: 'spot', time: '23:00-00:00', desc: '步行3分钟即到。23:30熄灯前抓紧看！千厮门大桥上拍全景最佳。重庆名片级夜景', gmap: '洪崖洞' },
+      { name: '较场口夜市', lat: 29.5582, lng: 106.5750, type: 'food', time: '00:00+', desc: '夜宵：步行5分钟。老人可先回酒店休息。小吃街+烧烤+冰粉', gmap: '较场口夜市' }
+    ]
+  },
+  {
+    id: 2,
+    label: 'D2 白天+傍晚',
+    date: '6月26日 周四',
+    title: '解放碑 → 南滨路 → 高铁去成都',
+    color: '#007aff',
+    locations: [
+      { name: '解放碑步行街', lat: 29.5606, lng: 106.5767, type: 'spot', time: '09:00', desc: '重庆地标，平地步行。周边商圈+国泰艺术中心。老人轻松逛', gmap: '解放碑步行街' },
+      { name: '朝天门来福士', lat: 29.5678, lng: 106.5855, type: 'spot', time: '10:00', desc: '步行可达，看两江交汇（长江+嘉陵江）。来福士商场有空调，老人休息方便', gmap: '重庆来福士' },
+      { name: '慈记外婆桥', lat: 29.5610, lng: 106.5755, type: 'food', time: '12:00', desc: '⭐ 午餐推荐：不辣特色川菜多，菌汤味道不错。老人友好+不吃辣首选。311赞小红书推荐', budget: '人均60-80元', gmap: '慈记外婆桥 解放碑' },
+      { name: '南滨路江边步道', lat: 29.5500, lng: 106.5850, type: 'spot', time: '14:00', desc: '打车约20分钟。平地江边步道，老人友好。隔江看渝中半岛全景，下午光线好', gmap: '南滨路' },
+      { name: '长嘉汇弹子石老街', lat: 29.5800, lng: 106.5950, type: 'spot', time: '16:30', desc: '两江交汇观景平台，看日落+华灯初上。有电梯，老人不用爬坡', gmap: '长嘉汇弹子石老街' },
+      { name: '藕然间', lat: 29.5570, lng: 106.5730, type: 'food', time: '17:30', desc: '⭐ 晚餐推荐：藕汤浓郁，清汤锅底。较场口附近，6人汤锅合适。吃完打车去重庆北站约30分钟', budget: '人均50-70元', gmap: '藕然间 较场口' },
+      { name: '重庆北站', lat: 29.6100, lng: 106.5475, type: 'transport', time: '18:30出发', desc: '推荐 G8690 19:04→20:26 成都东。备选：G8694 19:30 / G8696 20:15', gmap: '重庆北站' }
+    ]
+  }
+];
+
+function overviewContent() {
+  return `
+<div class="hero"><h1>🌶️ 重庆 1 晚 · 夜景优先</h1><p class="subtitle">6人家庭出行 · 80岁老人同行 · 不吃辣友好 · 6/25晚→6/26晚</p></div>
+<div class="info-grid">
+  <div class="info-card"><div class="label">✈️ 去程</div><div class="value">6/25 GS6582<br>杭州T3 19:45→重庆T3 22:25</div></div>
+  <div class="info-card"><div class="label">🏨 酒店</div><div class="value">桔子解放碑洪崖洞江景酒店<br>江景家庭房+大床房</div></div>
+  <div class="info-card"><div class="label">🚄 去成都</div><div class="value">6/26 晚间<br>重庆北→成都东 ~1.5h</div></div>
+  <div class="info-card"><div class="label">👥 人数</div><div class="value">6人（80岁×1, 50岁×4, 20岁×1）<br>不吃辣 · 老人吃素</div></div>
+</div>
+<div class="section-head">行程概览</div>
+<div class="day-list">${DAYS.slice(1).map(d=>`<div class="card" onclick="go(${d.id})"><div class="name"><span class="dot" style="background:${d.color}"></span>${d.label} · ${d.title}</div><div class="desc">${d.date}</div></div>`).join('')}</div>
+
+<div class="section-head">🚄 高铁备选（6/26 重庆→成都东）</div>
+<div class="pay-summary">
+  <table style="width:100%;font-size:12px;border-collapse:collapse;">
+    <tr style="font-weight:700;color:var(--text-primary)"><td>发车</td><td>站</td><td>抵达</td><td>车次</td><td>用时</td><td>二等座</td></tr>
+    <tr><td>18:37</td><td>重庆北</td><td>19:54</td><td>G8688</td><td>1h17m</td><td>~168</td></tr>
+    <tr style="background:rgba(232,83,46,.08)"><td>19:04 ⭐</td><td>重庆北</td><td>20:26</td><td>G8690</td><td>1h22m</td><td>~168</td></tr>
+    <tr><td>19:30</td><td>重庆北</td><td>20:52</td><td>G8694</td><td>1h22m</td><td>~168</td></tr>
+    <tr><td>20:15</td><td>重庆北</td><td>21:38</td><td>G8696</td><td>1h23m</td><td>~168</td></tr>
+    <tr><td>20:50</td><td>重庆西</td><td>22:05</td><td>G8640</td><td>1h15m</td><td>~153</td></tr>
+    <tr><td>21:10</td><td>重庆北</td><td>22:32</td><td>G8698</td><td>1h22m</td><td>~168</td></tr>
+  </table>
+  <p style="margin-top:8px;font-size:11px;color:var(--text-tertiary)">⚠️ 携程数据推算，请打开携程APP核实。推荐19:04 G8690</p>
+</div>
+
+<div class="section-head">🍽️ 餐厅全览</div>
+
+<div class="restaurant-section">
+  <h3>🥬 清淡/素食 — 老人友好</h3>
+  <div class="restaurant-grid">
+    <div class="restaurant-card">
+      <div class="rname">慈记外婆桥 ⭐</div>
+      <div class="rdesc">不辣特色川菜，菌汤味道不错。解放碑附近，311赞推荐</div>
+      <span class="rtag recommend">首推</span><span class="rtag veg-friendly">素食友好</span>
+    </div>
+    <div class="restaurant-card">
+      <div class="rname">藕然间 ⭐</div>
+      <div class="rdesc">藕汤浓郁，清汤锅底。较场口，6人汤锅合适</div>
+      <span class="rtag recommend">首推</span><span class="rtag veg-friendly">素食友好</span>
+    </div>
+    <div class="restaurant-card">
+      <div class="rname">坎上旱蒸鸡</div>
+      <div class="rdesc">重庆本地旱蒸鸡，清淡不辣，适合老人</div>
+      <span class="rtag veg-friendly">清淡</span>
+    </div>
+    <div class="restaurant-card">
+      <div class="rname">梯坎小酒馆</div>
+      <div class="rdesc">避风塘海虾、鸡爪茄子煲、干炸平菇，全清淡菜。485赞</div>
+      <span class="rtag veg-friendly">清淡</span>
+    </div>
+    <div class="restaurant-card">
+      <div class="rname">冯四孃跷脚牛肉</div>
+      <div class="rdesc">清汤牛肉锅，分量足价格实惠。观音桥商场里</div>
+      <span class="rtag veg-friendly">清淡</span>
+    </div>
+    <div class="restaurant-card">
+      <div class="rname">千阅鸣</div>
+      <div class="rdesc">黑珍珠1钻素食餐厅，创意料理，不做仿荤菜</div>
+      <span class="rtag veg-friendly">纯素食</span>
+    </div>
+  </div>
+</div>
+
+<div class="restaurant-section">
+  <h3>🍲 火锅 — 鸳鸯锅/微微辣</h3>
+  <div class="restaurant-grid">
+    <div class="restaurant-card">
+      <div class="rname">周嬢嬢火锅 ⭐</div>
+      <div class="rdesc">鸳鸯锅+微微辣选项，广东胃实测能扛。长江索道旁</div>
+      <span class="rtag hotpot">火锅</span><span class="rtag recommend">首推</span>
+    </div>
+    <div class="restaurant-card">
+      <div class="rname">钦姐重庆火锅 ⭐</div>
+      <div class="rdesc">菌汤鸳鸯锅，菌汤半边不辣。485赞推荐</div>
+      <span class="rtag hotpot">火锅</span><span class="rtag recommend">首推</span>
+    </div>
+    <div class="restaurant-card">
+      <div class="rname">祝幺妹火锅</div>
+      <div class="rdesc">水火锅，锅底不厚重不油腻。鲜毛肚血旺出名</div>
+      <span class="rtag hotpot">火锅</span>
+    </div>
+    <div class="restaurant-card">
+      <div class="rname">丁眼镜火锅</div>
+      <div class="rdesc">解放碑居民楼老火锅，酥肉出名。需点鸳鸯锅</div>
+      <span class="rtag hotpot">火锅</span>
+    </div>
+    <div class="restaurant-card">
+      <div class="rname">刘友池火锅</div>
+      <div class="rdesc">解放碑居民楼老火锅，1887赞爆款。有手搓冰粉</div>
+      <span class="rtag hotpot">火锅</span>
+    </div>
+    <div class="restaurant-card">
+      <div class="rname">黑白荤豆花</div>
+      <div class="rdesc">牛肉荤豆花+鸭掌，清汤底不辣。485赞推荐</div>
+      <span class="rtag hotpot">豆花锅</span>
+    </div>
+  </div>
+</div>
+
+<div class="section-head">💡 出行提醒</div>
+<div class="pay-summary">
+  <h4>⚠️ 关键注意</h4>
+  <p>🥬 <strong>老人吃素</strong>：慈记外婆桥（菌汤+素菜）、千阅鸣（纯素食）、藕然间（藕汤涮素菜）</p>
+  <p>🌶️ <strong>不吃辣</strong>：所有推荐均为清汤/菌汤/鸳鸯锅不辣半边</p>
+  <p>🚕 <strong>6人出行</strong>：需打2辆车，解放碑→南滨路约20分钟，解放碑→重庆北约30分钟</p>
+  <p>🌃 <strong>夜景</strong>：洪崖洞23:30熄灯，南滨路+长嘉汇傍晚看渝中半岛华灯初上</p>
+  <p>🎫 <strong>高铁</strong>：建议提前在12306买6人票，选19:04 G8690</p>
+</div>
+
+<div class="section-head">图例</div>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--tint-red)"></div>餐厅</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--tint-blue)"></div>景点</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--tint-orange)"></div>酒店</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--text-tertiary)"></div>交通</div>
+</div>`;
+}
+
+// ══════════ ENGINE ══════════
+
+const map = L.map('map', { center: [HOTEL.lat || 29.56, HOTEL.lng || 106.58], zoom: 13, zoomControl: false, attributionControl: true });
+L.control.zoom({ position: 'topright' }).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
+
+const LocateControl = L.Control.extend({
+  options: { position: 'bottomright' },
+  onAdd() {
+    const btn = L.DomUtil.create('button', 'locate-btn');
+    btn.innerHTML = '📍';
+    btn.title = '我的位置';
+    L.DomEvent.disableClickPropagation(btn);
+    btn.addEventListener('click', () => {
+      btn.classList.add('active');
+      map.locate({ setView: true, maxZoom: 15 });
+    });
+    return btn;
+  }
+});
+new LocateControl().addTo(map);
+let locMarker, locCircle;
+map.on('locationfound', e => {
+  const r = e.accuracy / 2;
+  if (locMarker) { locMarker.setLatLng(e.latlng); locCircle.setLatLng(e.latlng).setRadius(r); }
+  else {
+    locMarker = L.marker(e.latlng, {
+      icon: L.divIcon({ className:'', html:'<div style="width:14px;height:14px;border-radius:50%;background:#007aff;border:2.5px solid #fff;box-shadow:0 0 6px rgba(0,122,255,.5)"></div><div class="loc-pulse" style="position:absolute;top:0;left:0"></div>', iconSize:[14,14], iconAnchor:[7,7] }),
+      zIndexOffset: 2000
+    }).addTo(map);
+    locCircle = L.circle(e.latlng, { radius: r, color: '#007aff', fillColor: '#007aff', fillOpacity: .08, weight: 1 }).addTo(map);
+  }
+});
+map.on('locationerror', () => {});
+
+function icon(color, emoji) {
+  return L.divIcon({ className: '', html: `<div style="width:28px;height:28px;border-radius:50%;background:${color};border:2.5px solid #fff;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.18)">${emoji||''}</div>`, iconSize: [28,28], iconAnchor: [14,14], popupAnchor: [0,-16] });
+}
+
+if (HOTEL.lat) L.marker([HOTEL.lat, HOTEL.lng], { icon: icon('#ff9500','🏨'), zIndexOffset: 1000 }).addTo(map).bindPopup(`<b>${HOTEL.name}</b>`);
+
+let markers = [], polylines = [];
+const emojis = { food:'🍽️', spot:'📍', hotel:'🏨', transport:'🚃', drink:'🍺' };
+
+function clearMap() { markers.forEach(m=>map.removeLayer(m)); polylines.forEach(p=>map.removeLayer(p)); markers=[]; polylines=[]; }
+
+function showDay(idx) {
+  clearMap();
+  if (idx === 0) {
+    const pts = [];
+    DAYS.forEach(d => d.locations.forEach(l => { if(l.lat) pts.push([l.lat,l.lng]); }));
+    if(pts.length) map.fitBounds(pts, {padding:[30,30]});
+    DAYS.slice(1).forEach(d => {
+      d.locations.filter(l=>l.time!=='—').forEach(l => {
+        const m = L.circleMarker([l.lat,l.lng], { radius:4, fillColor:d.color, color:'#fff', weight:1.5, fillOpacity:.9 }).addTo(map).bindPopup(`<b>${l.name}</b><br><span style="color:#86868b">${d.label}</span>`);
+        markers.push(m);
+      });
+    });
+    return;
+  }
+  const day = DAYS.find(d=>d.id===idx);
+  if(!day) return;
+  const coords = [];
+  day.locations.forEach(l => {
+    if(!l.lat) return;
+    const m = L.marker([l.lat,l.lng], { icon: icon(day.color, emojis[l.type]||'📌') }).addTo(map);
+    const gmapQ = l.gmap||encodeURIComponent(l.name+' 重庆');
+    m.bindPopup(`<b>${l.name}</b>${l.time!=='—'?'<br><span style="color:#86868b">'+l.time+'</span>':''}<br>${l.desc}${l.budget?'<br><span style="color:#ff9500">'+l.budget+'</span>':''}<br><a href="#" onclick="event.preventDefault();openAS('${l.name.replace(/'/g,"\\'")}',${l.lat},${l.lng},'${gmapQ}')">📍 导航</a>`);
+    markers.push(m);
+    if(l.time!=='—') coords.push([l.lat,l.lng]);
+  });
+  if(coords.length>1) { const pl = L.polyline(coords, { color:day.color, weight:2.5, opacity:.5, dashArray:'6,5' }).addTo(map); polylines.push(pl); }
+  if(coords.length) map.fitBounds(coords, { padding:[40,40], maxZoom:14 });
+}
+
+function payChips(pay) {
+  if(!pay) return '';
+  let h = '<div class="pays">';
+  const m = { cash:'💴现金', card:'💳刷卡', alipay:'支付宝', wechat:'微信' };
+  for(const [k,label] of Object.entries(m)) {
+    if(pay[k]!==undefined) { const c = pay[k]===1?'ok':pay[k]===0.5?'idk':'no'; h += `<span class="pay ${c}">${label}</span>`; }
+  }
+  return h+'</div>';
+}
+
+const IN_APP_WEBVIEW = (() => {
+  const ua = (navigator.userAgent || '').toLowerCase();
+  return /micromessenger|xhs|xhsdiscover|discover\/|tiktok|aweme|weibo|qq\/|qqbrowser|alipayclient|dingtalk|lark|feishu|ucbrowser|baiduboxapp|toutiao|newsarticle/.test(ua);
+})();
+
+function openAS(name, lat, lng, gmapQ) {
+  const overlay = document.createElement('div');
+  overlay.className = 'as-overlay show';
+  overlay.innerHTML = `<div class="as-sheet">
+    <div class="as-group">
+      <button class="as-item" onclick="this.closest('.as-overlay').remove();window.open('https://maps.apple.com/?q=${encodeURIComponent(name)}&ll=${lat},${lng}')">🗺️ Apple Maps</button>
+      <button class="as-item" onclick="this.closest('.as-overlay').remove();window.open('https://www.google.com/maps/search/${encodeURIComponent(gmapQ)}')">🌐 Google Maps</button>
+      <button class="as-item" onclick="this.closest('.as-overlay').remove();window.open('https://uri.amap.com/search?keyword=${encodeURIComponent(name)}')">🧭 高德地图</button>
+    </div>
+    <div class="as-group"><button class="as-item as-cancel" onclick="this.closest('.as-overlay').remove()">取消</button></div>
+  </div>`;
+  overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+
+// ══════════ RENDER ══════════
+function renderTabs() {
+  document.getElementById('tabs').innerHTML = DAYS.map(d =>
+    `<button class="tab${d.id===0?' active':''}" onclick="go(${d.id})">${d.label}</button>`
+  ).join('');
+}
+
+function renderDay(idx) {
+  if (idx === 0) {
+    document.getElementById('content').innerHTML = overviewContent();
+    return;
+  }
+  const day = DAYS.find(d=>d.id===idx);
+  if(!day) return;
+  let html = `<div class="day-head"><h2>${day.label} · ${day.title}</h2><p>${day.date}</p></div>`;
+  html += `<div class="route-bar">${day.locations.map((l,i)=>`<strong>${l.time}</strong> → ${l.name}`).join('\n')}</div>`;
+  html += `<div class="timeline">`;
+  day.locations.forEach(l => {
+    html += `<div class="tl-item">
+      <div class="tl-dot ${l.type}"></div>
+      <div class="card" onclick="this.querySelector('.details').classList.toggle('closed')">
+        <div class="time">${l.time}</div>
+        <div class="name">${l.name} <span class="badge ${l.type}">${l.type==='food'?'餐厅':l.type==='spot'?'景点':l.type==='hotel'?'酒店':'交通'}</span></div>
+        <div class="desc">${l.desc}</div>
+        ${l.budget?`<div class="budget">${l.budget}</div>`:''}
+        ${payChips(l.pay)}
+        <div class="links">
+          <button class="btn nav" onclick="event.stopPropagation();openAS('${l.name.replace(/'/g,"\\'")}',${l.lat},${l.lng},'${l.gmap||encodeURIComponent(l.name+' 重庆')}')">📍 导航</button>
+          ${l.xhs?`<a class="btn xhs" href="${l.xhs}" target="_blank" onclick="event.stopPropagation()">📕 小红书</a>`:''}
+        </div>
+        ${l.detail?`<div class="details closed">${l.detail.replace(/\n/g,'<br>')}</div>`:''}
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  document.getElementById('content').innerHTML = html;
+}
+
+function go(idx) {
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active', DAYS[i].id===idx));
+  renderDay(idx);
+  showDay(idx);
+}
+
+renderTabs();
+renderDay(0);
+showDay(0);
+</script>
+</body>
+</html>
