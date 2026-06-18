@@ -121,6 +121,7 @@ a:hover { text-decoration: underline; }
   align-items: center; justify-content: center; overflow: hidden; position: relative;
   background-size: cover; background-position: center;
 }
+.spot-hero img { width: 100%; height: 100%; object-fit: cover; }
 .spot-hero svg { width: 100%; height: 100%; }
 .spot-hero .hero-overlay {
   position: absolute; bottom: 0; left: 0; right: 0;
@@ -649,11 +650,10 @@ function renderDay(idx) {
   html += `<div class="timeline">`;
   day.locations.forEach(l => {
     const hasHero = !!l.hero;
-    const svgContent = SVGS[l.hero] || '';
     html += `<div class="tl-item">
       <div class="tl-dot ${l.type}"></div>
       <div class="card${hasHero?' has-hero':''}">
-        ${hasHero?`<div class="spot-hero">${svgContent}<span class="spot-emoji">${l.emoji||''}</span></div>`:''}
+        ${hasHero?`<div class="spot-hero"><img src="/chongqing/images/${l.hero}.png" alt="${l.name}" onerror="this.style.display='none';this.insertAdjacentHTML('beforebegin',(SVGS['${l.hero}']||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'));" loading="lazy"><span class="spot-emoji">${l.emoji||''}</span></div>`:''}
         <div class="time">${l.time}</div>
         <div class="name">${l.name} <span class="badge ${l.type}">${l.type==='food'?'餐厅':l.type==='spot'?'景点':l.type==='hotel'?'酒店':'交通'}</span></div>
         <div class="desc">${l.desc}</div>
