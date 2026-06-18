@@ -60,15 +60,6 @@ a:hover { text-decoration: underline; }
   font-size: 18px; cursor: pointer;
 }
 .locate-btn.active { color: #007aff; }
-@keyframes loc-pulse {
-  0%   { transform: scale(1); opacity: .55; }
-  100% { transform: scale(2.4); opacity: 0; }
-}
-.loc-pulse {
-  width: 14px; height: 14px; border-radius: 50%;
-  background: rgba(0,122,255,.25);
-  animation: loc-pulse 1.6s ease-out infinite;
-}
 
 .tabs {
   display: flex; gap: 6px; padding: 12px 16px; overflow-x: auto;
@@ -108,7 +99,7 @@ a:hover { text-decoration: underline; }
 
 .timeline { position: relative; padding-left: 24px; }
 .timeline::before { content: ''; position: absolute; left: 7px; top: 20px; bottom: 20px; width: 1.5px; background: var(--separator); }
-.tl-item { position: relative; margin-bottom: 10px; }
+.tl-item { position: relative; margin-bottom: 14px; }
 .tl-dot { position: absolute; left: -20px; top: 18px; width: 10px; height: 10px; border-radius: 50%; z-index: 1; box-shadow: 0 0 0 3px var(--bg-secondary); }
 .tl-dot.food    { background: var(--tint-red); }
 .tl-dot.spot    { background: var(--tint-blue); }
@@ -121,6 +112,44 @@ a:hover { text-decoration: underline; }
 .card .time { font-size: 12px; font-weight: 600; color: var(--text-tertiary); letter-spacing: .01em; }
 .card .name { font-size: 17px; font-weight: 600; margin: 2px 0 4px; letter-spacing: -0.01em; display: flex; align-items: center; gap: 6px; }
 .card .desc { font-size: 14px; color: var(--text-secondary); line-height: 1.45; }
+.card .intro { font-size: 13px; color: var(--text-primary); line-height: 1.55; margin: 6px 0; padding: 8px 10px; background: var(--bg-tertiary); border-radius: var(--radius-sm); border-left: 3px solid var(--accent); }
+
+/* Spot hero image */
+.spot-hero {
+  width: 100%; height: 180px; border-radius: var(--radius-md) var(--radius-md) 0 0;
+  margin: -14px -16px 10px -16px; object-fit: cover; display: flex;
+  align-items: center; justify-content: center; overflow: hidden; position: relative;
+  background-size: cover; background-position: center;
+}
+.spot-hero svg { width: 100%; height: 100%; }
+.spot-hero .hero-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 30px 16px 12px;
+  background: linear-gradient(transparent, rgba(0,0,0,.65));
+  color: #fff; font-size: 14px; font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+
+.spot-emoji { position: absolute; top: 10px; right: 10px; font-size: 36px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.3)); z-index: 2; }
+.card.has-hero { position: relative; padding-top: 0; overflow: hidden; }
+.card.has-hero .time, .card.has-hero .name, .card.has-hero .desc, .card.has-hero .intro, .card.has-hero .links, .card.has-hero .budget { padding: 0 16px; }
+.card.has-hero .time { padding-top: 10px; }
+
+/* Detail section inside card */
+.spot-detail { margin-top: 10px; padding: 10px 16px 0; border-top: .5px solid var(--separator); font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+.spot-detail h4 { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.spot-detail ul { padding-left: 16px; margin: 4px 0; }
+.spot-detail li { margin-bottom: 2px; }
+.spot-detail .tip { background: rgba(255,149,0,.08); border-radius: var(--radius-sm); padding: 8px 10px; margin: 6px 0; font-size: 12px; color: var(--tint-orange); }
+.spot-detail .tip::before { content: '💡 '; }
+
+/* Image gallery */
+.spot-gallery { display: flex; gap: 6px; margin-top: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.spot-gallery::-webkit-scrollbar { display: none; }
+.spot-gallery img {
+  width: 120px; height: 80px; border-radius: 8px; object-fit: cover;
+  flex-shrink: 0; border: 1px solid var(--separator);
+}
 
 .badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 4px; }
 .badge.food   { background: rgba(232,83,46,.1);  color: var(--tint-red); }
@@ -136,7 +165,7 @@ a:hover { text-decoration: underline; }
 .pay.no  { background: rgba(255,59,48,.08); color: var(--tint-red); }
 .pay.idk { background: rgba(255,149,0,.1);  color: var(--tint-orange); }
 
-.links { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.links { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; padding: 0 16px 14px; }
 .btn {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 8px 14px; border-radius: var(--radius-sm);
@@ -175,13 +204,6 @@ a:hover { text-decoration: underline; }
 .as-group .as-item:active { background: rgba(0,0,0,.06); }
 .as-cancel { font-weight: 600; }
 
-.details {
-  margin-top: 10px; padding-top: 10px;
-  border-top: .5px solid var(--separator);
-  font-size: 13px; color: var(--text-secondary); line-height: 1.6;
-}
-.details.closed { display: none; }
-
 .day-list .card { margin-bottom: 8px; }
 .day-list .card .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
 
@@ -212,6 +234,11 @@ a:hover { text-decoration: underline; }
 .rtag.recommend { background: rgba(232,83,46,.1); color: var(--tint-red); }
 .rtag.veg-friendly { background: rgba(52,199,89,.1); color: var(--tint-green); }
 .rtag.hotpot { background: rgba(255,149,0,.1); color: var(--tint-orange); }
+
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+table td, table th { padding: 6px 8px; text-align: left; border-bottom: .5px solid var(--separator); }
+table th { font-weight: 700; color: var(--text-primary); font-size: 11px; text-transform: uppercase; letter-spacing: .02em; }
+table tr.highlight { background: rgba(232,83,46,.06); }
 </style>
 </head>
 <body>
@@ -221,6 +248,30 @@ a:hover { text-decoration: underline; }
 <div class="content" id="content"></div>
 
 <script>
+// ══════════ SVG Illustrations ══════════
+const SVGS = {
+  hongyadong: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400"><defs><linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0a0a2e"/><stop offset="40%" stop-color="#1a1040"/><stop offset="70%" stop-color="#2d1b4e"/><stop offset="100%" stop-color="#1a0a2e"/></linearGradient><linearGradient id="water1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c44b2b"/><stop offset="100%" stop-color="#1a0a2e"/></linearGradient></defs><rect width="800" height="400" fill="url(#sky1)"/><circle cx="650" cy="60" r="30" fill="#f5e6c8" opacity="0.9"/><circle cx="650" cy="60" r="35" fill="#f5e6c8" opacity="0.15"/><g opacity="0.3"><circle cx="200" cy="40" r="1.5" fill="#fff"/><circle cx="350" cy="80" r="1" fill="#fff"/><circle cx="500" cy="30" r="1.5" fill="#fff"/><circle cx="150" cy="90" r="1" fill="#fff"/><circle cx="600" cy="100" r="1" fill="#fff"/><circle cx="700" cy="50" r="1.5" fill="#fff"/><circle cx="450" cy="55" r="1" fill="#fff"/></g><rect x="0" y="280" width="800" height="120" fill="url(#water1)" opacity="0.6"/><rect x="0" y="300" width="800" height="100" fill="#0d0d2a" opacity="0.5"/><g transform="translate(50,140)"><rect x="0" y="60" width="80" height="80" rx="2" fill="#8B4513" opacity="0.8"/><rect x="10" y="50" width="70" height="90" rx="2" fill="#A0522D" opacity="0.8"/><rect x="5" y="40" width="75" height="100" rx="2" fill="#CD853F" opacity="0.7"/><rect x="15" y="35" width="65" height="105" rx="2" fill="#DEB887" opacity="0.6"/><rect x="20" y="30" width="60" height="110" rx="2" fill="#F5DEB3" opacity="0.5"/><rect x="8" y="80" width="10" height="8" fill="#FFD700" opacity="0.9"/><rect x="25" y="75" width="10" height="8" fill="#FFD700" opacity="0.9"/><rect x="42" y="70" width="10" height="8" fill="#FFD700" opacity="0.9"/><rect x="58" y="85" width="10" height="8" fill="#FFD700" opacity="0.9"/><rect x="15" y="95" width="8" height="6" fill="#FFA500" opacity="0.8"/><rect x="35" y="90" width="8" height="6" fill="#FFA500" opacity="0.8"/><rect x="50" y="100" width="8" height="6" fill="#FFA500" opacity="0.8"/></g><g transform="translate(180,130)"><rect x="0" y="70" width="90" height="90" rx="2" fill="#8B4513" opacity="0.8"/><rect x="10" y="55" width="80" height="105" rx="2" fill="#A0522D" opacity="0.8"/><rect x="5" y="45" width="85" height="115" rx="2" fill="#CD853F" opacity="0.7"/><rect x="15" y="40" width="75" height="120" rx="2" fill="#DEB887" opacity="0.6"/><rect x="20" y="35" width="70" height="125" rx="2" fill="#F5DEB3" opacity="0.5"/><rect x="12" y="90" width="12" height="8" fill="#FFD700" opacity="0.9"/><rect x="30" y="80" width="12" height="8" fill="#FFD700" opacity="0.9"/><rect x="48" y="75" width="12" height="8" fill="#FFD700" opacity="0.9"/><rect x="65" y="85" width="12" height="8" fill="#FFD700" opacity="0.9"/><rect x="20" y="100" width="10" height="6" fill="#FFA500" opacity="0.8"/><rect x="40" y="95" width="10" height="6" fill="#FFA500" opacity="0.8"/><rect x="58" y="105" width="10" height="6" fill="#FFA500" opacity="0.8"/></g><g transform="translate(330,120)"><rect x="0" y="80" width="100" height="100" rx="2" fill="#8B4513" opacity="0.8"/><rect x="10" y="60" width="90" height="120" rx="2" fill="#A0522D" opacity="0.8"/><rect x="5" y="50" width="95" height="130" rx="2" fill="#CD853F" opacity="0.7"/><rect x="15" y="45" width="85" height="135" rx="2" fill="#DEB887" opacity="0.6"/><rect x="20" y="40" width="80" height="140" rx="2" fill="#F5DEB3" opacity="0.5"/><rect x="15" y="100" width="12" height="8" fill="#FFD700" opacity="0.9"/><rect x="35" y="90" width="12" height="8" fill="#FFD700" opacity="0.9"/><rect x="55" y="85" width="12" height="8" fill="#FFD700" opacity="0.9"/><rect x="75" y="95" width="12" height="8" fill="#FFD700" opacity="0.9"/><rect x="25" y="110" width="10" height="6" fill="#FFA500" opacity="0.8"/><rect x="45" y="105" width="10" height="6" fill="#FFA500" opacity="0.8"/><rect x="65" y="115" width="10" height="6" fill="#FFA500" opacity="0.8"/></g><g transform="translate(510,135)"><rect x="0" y="85" width="85" height="85" rx="2" fill="#8B4513" opacity="0.8"/><rect x="10" y="70" width="75" height="100" rx="2" fill="#A0522D" opacity="0.8"/><rect x="5" y="60" width="80" height="110" rx="2" fill="#CD853F" opacity="0.7"/><rect x="15" y="55" width="70" height="115" rx="2" fill="#DEB887" opacity="0.6"/><rect x="20" y="50" width="65" height="120" rx="2" fill="#F5DEB3" opacity="0.5"/><rect x="12" y="105" width="10" height="8" fill="#FFD700" opacity="0.9"/><rect x="30" y="95" width="10" height="8" fill="#FFD700" opacity="0.9"/><rect x="48" y="90" width="10" height="8" fill="#FFD700" opacity="0.9"/><rect x="65" y="100" width="10" height="8" fill="#FFD700" opacity="0.9"/></g><rect x="200" y="290" width="400" height="2" fill="#FFD700" opacity="0.3"/><rect x="250" y="310" width="300" height="1.5" fill="#FFD700" opacity="0.2"/><rect x="180" y="330" width="440" height="1" fill="#FFD700" opacity="0.15"/><g transform="translate(400,280)"><rect x="0" y="0" width="120" height="3" rx="1.5" fill="#c44b2b" opacity="0.4"/><rect x="20" y="10" width="80" height="2" rx="1" fill="#f5a623" opacity="0.3"/></g><rect x="0" y="300" width="800" height="100" fill="#0a0a1e" opacity="0.4"/></svg>`,
+
+  jiefangbei: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400"><defs><linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4a90d9"/><stop offset="50%" stop-color="#87CEEB"/><stop offset="100%" stop-color="#e8f0fe"/></linearGradient></defs><rect width="800" height="400" fill="url(#sky2)"/><circle cx="700" cy="50" r="25" fill="#fff" opacity="0.9"/><circle cx="700" cy="50" r="30" fill="#fff" opacity="0.2"/><g opacity="0.4"><rect x="100" y="280" width="60" height="120" fill="#8899aa"/><rect x="110" y="270" width="40" height="130" fill="#99aabb"/><rect x="200" y="250" width="70" height="150" fill="#7788aa"/><rect x="210" y="240" width="50" height="160" fill="#8899bb"/><rect x="300" y="220" width="80" height="180" fill="#6677aa"/><rect x="310" y="210" width="60" height="190" fill="#7788bb"/><rect x="450" y="240" width="75" height="160" fill="#8899aa"/><rect x="460" y="230" width="55" height="170" fill="#99aabb"/><rect x="560" y="260" width="65" height="140" fill="#7788aa"/><rect x="570" y="250" width="45" height="150" fill="#8899bb"/><rect x="680" y="270" width="55" height="130" fill="#8899aa"/><rect x="690" y="260" width="35" height="140" fill="#99aabb"/></g><g transform="translate(360,200)"><rect x="15" y="0" width="30" height="180" fill="#d4c5a9" rx="2"/><rect x="10" y="10" width="40" height="170" fill="#e8dcc8" rx="2"/><rect x="5" y="20" width="50" height="160" fill="#f0e6d0" rx="2"/><rect x="20" y="5" width="20" height="15" fill="#c4a86a"/><rect x="25" y="0" width="10" height="10" fill="#b8960a"/><rect x="0" y="50" width="60" height="4" fill="#c4a86a" rx="2"/><rect x="0" y="90" width="60" height="4" fill="#c4a86a" rx="2"/><rect x="0" y="130" width="60" height="4" fill="#c4a86a" rx="2"/><rect x="0" y="170" width="60" height="6" fill="#c4a86a" rx="3"/></g><rect x="0" y="320" width="800" height="80" fill="#d4c5a9"/><rect x="0" y="340" width="800" height="60" fill="#c4b89a"/><g opacity="0.6"><circle cx="150" cy="360" r="8" fill="#5a8a3c"/><circle cx="650" cy="370" r="10" fill="#5a8a3c"/><circle cx="400" cy="365" r="7" fill="#4a7a2c"/></g><text x="400" y="395" text-anchor="middle" font-size="12" fill="#8a7a5a" font-family="sans-serif">解放碑步行街</text></svg>`,
+
+  chaotianmen: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400"><defs><linearGradient id="sky3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a3a6a"/><stop offset="50%" stop-color="#4a8ac0"/><stop offset="100%" stop-color="#a0c8e8"/></linearGradient><linearGradient id="river1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#8B7355"/><stop offset="45%" stop-color="#8B7355"/><stop offset="55%" stop-color="#4a8a5a"/><stop offset="100%" stop-color="#4a8a5a"/></linearGradient></defs><rect width="800" height="400" fill="url(#sky3)"/><g opacity="0.3"><circle cx="200" cy="50" r="1.5" fill="#fff"/><circle cx="400" cy="30" r="1" fill="#fff"/><circle cx="600" cy="60" r="1.5" fill="#fff"/></g><rect x="0" y="280" width="800" height="120" fill="url(#river1)" opacity="0.7"/><rect x="0" y="300" width="800" height="100" fill="#1a3050" opacity="0.3"/><g transform="translate(250,160)"><rect x="0" y="40" width="300" height="100" fill="#c0d0e0" opacity="0.8" rx="3"/><rect x="20" y="20" width="260" height="120" fill="#d0e0f0" opacity="0.8" rx="3"/><rect x="50" y="0" width="200" height="140" fill="#e0e8f0" opacity="0.8" rx="3"/><rect x="80" y="-20" width="140" height="160" fill="#e8f0f8" opacity="0.8" rx="3"/><rect x="100" y="-40" width="100" height="180" fill="#f0f4f8" opacity="0.8" rx="3"/><rect x="130" y="-60" width="40" height="200" fill="#f8fafc" opacity="0.8" rx="2"/><rect x="60" y="80" width="30" height="20" fill="#8899aa" opacity="0.5"/><rect x="110" y="80" width="30" height="20" fill="#8899aa" opacity="0.5"/><rect x="160" y="80" width="30" height="20" fill="#8899aa" opacity="0.5"/><rect x="210" y="80" width="30" height="20" fill="#8899aa" opacity="0.5"/><rect x="85" y="60" width="30" height="20" fill="#99aabb" opacity="0.5"/><rect x="135" y="60" width="30" height="20" fill="#99aabb" opacity="0.5"/><rect x="185" y="60" width="30" height="20" fill="#99aabb" opacity="0.5"/><rect x="110" y="40" width="30" height="20" fill="#aabbcc" opacity="0.5"/><rect x="160" y="40" width="30" height="20" fill="#aabbcc" opacity="0.5"/><rect x="135" y="20" width="30" height="20" fill="#bbccdd" opacity="0.5"/></g><rect x="300" y="285" width="200" height="2" fill="#fff" opacity="0.4"/><text x="400" y="395" text-anchor="middle" font-size="12" fill="#6a8aaa" font-family="sans-serif">朝天门 · 两江交汇</text></svg>`,
+
+  nanbinlu: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400"><defs><linearGradient id="sky4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a4a6a"/><stop offset="60%" stop-color="#6a9ac0"/><stop offset="100%" stop-color="#d0e0f0"/></linearGradient><linearGradient id="river2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4a8aaa"/><stop offset="100%" stop-color="#2a4a6a"/></linearGradient></defs><rect width="800" height="400" fill="url(#sky4)"/><circle cx="200" cy="50" r="20" fill="#FFD700" opacity="0.7"/><circle cx="200" cy="50" r="25" fill="#FFD700" opacity="0.15"/><g opacity="0.2"><rect x="300" y="180" width="30" height="100" fill="#8899aa"/><rect x="340" y="170" width="25" height="110" fill="#99aabb"/><rect x="380" y="160" width="35" height="120" fill="#8899aa"/><rect x="420" y="175" width="28" height="105" fill="#99aabb"/><rect x="460" y="165" width="32" height="115" fill="#8899aa"/><rect x="500" y="180" width="26" height="100" fill="#99aabb"/></g><rect x="0" y="260" width="800" height="140" fill="url(#river2)" opacity="0.6"/><rect x="0" y="280" width="800" height="120" fill="#1a3050" opacity="0.3"/><rect x="0" y="240" width="800" height="30" fill="#5a8a5a" opacity="0.4"/><rect x="0" y="245" width="800" height="3" fill="#4a7a4a" opacity="0.5"/><g opacity="0.4"><circle cx="100" cy="255" r="6" fill="#3a6a3a"/><circle cx="250" cy="252" r="5" fill="#3a6a3a"/><circle cx="400" cy="258" r="7" fill="#3a6a3a"/><circle cx="550" cy="253" r="5" fill="#3a6a3a"/><circle cx="700" cy="256" r="6" fill="#3a6a3a"/></g><rect x="0" y="260" width="800" height="2" fill="#fff" opacity="0.15"/><rect x="0" y="300" width="800" height="1.5" fill="#fff" opacity="0.1"/><text x="400" y="395" text-anchor="middle" font-size="12" fill="#6a8aaa" font-family="sans-serif">南滨路 · 重庆外滩</text></svg>`,
+
+  changjiahui: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400"><defs><linearGradient id="sky5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a0a2e"/><stop offset="30%" stop-color="#4a2060"/><stop offset="60%" stop-color="#c44b2b"/><stop offset="85%" stop-color="#f5a623"/><stop offset="100%" stop-color="#1a3050"/></linearGradient><linearGradient id="river3" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#6a4a2a"/><stop offset="50%" stop-color="#6a4a2a"/><stop offset="55%" stop-color="#3a6a4a"/><stop offset="100%" stop-color="#3a6a4a"/></linearGradient></defs><rect width="800" height="400" fill="url(#sky5)"/><circle cx="650" cy="80" r="35" fill="#f5a623" opacity="0.5"/><circle cx="650" cy="80" r="40" fill="#f5a623" opacity="0.15"/><circle cx="650" cy="80" r="25" fill="#ffcc44" opacity="0.3"/><g opacity="0.3"><rect x="200" y="200" width="25" height="80" fill="#6677aa"/><rect x="240" y="190" width="20" height="90" fill="#7788bb"/><rect x="280" y="180" width="30" height="100" fill="#6677aa"/><rect x="320" y="195" width="22" height="85" fill="#7788bb"/><rect x="360" y="185" width="28" height="95" fill="#6677aa"/><rect x="400" y="200" width="24" height="80" fill="#7788bb"/><rect x="440" y="190" width="26" height="90" fill="#6677aa"/></g><rect x="0" y="280" width="800" height="120" fill="url(#river3)" opacity="0.6"/><rect x="0" y="300" width="800" height="100" fill="#1a2030" opacity="0.4"/><rect x="0" y="270" width="800" height="15" fill="#3a5a3a" opacity="0.3"/><g opacity="0.5"><rect x="300" y="285" width="200" height="2" fill="#fff"/></g><text x="400" y="395" text-anchor="middle" font-size="12" fill="#c4a86a" font-family="sans-serif">长嘉汇 · 日落观景台</text></svg>`,
+
+  jiaochangkou: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400"><defs><linearGradient id="sky6" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0a0a1a"/><stop offset="100%" stop-color="#1a1a3a"/></linearGradient></defs><rect width="800" height="400" fill="url(#sky6)"/><g opacity="0.4"><circle cx="100" cy="30" r="1.5" fill="#fff"/><circle cx="300" cy="50" r="1" fill="#fff"/><circle cx="500" cy="25" r="1.5" fill="#fff"/><circle cx="700" cy="45" r="1" fill="#fff"/></g><g opacity="0.6"><rect x="50" y="250" width="100" height="150" fill="#2a2a4a"/><rect x="170" y="240" width="90" height="160" fill="#3a3a5a"/><rect x="280" y="260" width="110" height="140" fill="#2a2a4a"/><rect x="410" y="245" width="95" height="155" fill="#3a3a5a"/><rect x="530" y="255" width="105" height="145" fill="#2a2a4a"/><rect x="660" y="250" width="90" height="150" fill="#3a3a5a"/></g><g opacity="0.9"><rect x="80" y="280" width="8" height="6" fill="#FFD700"/><rect x="120" y="275" width="8" height="6" fill="#FFD700"/><rect x="200" y="270" width="8" height="6" fill="#FFD700"/><rect x="250" y="285" width="8" height="6" fill="#FFD700"/><rect x="320" y="278" width="8" height="6" fill="#FFD700"/><rect x="380" y="272" width="8" height="6" fill="#FFD700"/><rect x="450" y="280" width="8" height="6" fill="#FFD700"/><rect x="500" y="275" width="8" height="6" fill="#FFD700"/><rect x="570" y="282" width="8" height="6" fill="#FFD700"/><rect x="620" y="270" width="8" height="6" fill="#FFD700"/><rect x="700" y="278" width="8" height="6" fill="#FFD700"/></g><g opacity="0.7"><rect x="100" y="300" width="6" height="4" fill="#FF6347"/><rect x="180" y="295" width="6" height="4" fill="#FF6347"/><rect x="260" y="305" width="6" height="4" fill="#FF6347"/><rect x="350" y="298" width="6" height="4" fill="#FF6347"/><rect x="430" y="302" width="6" height="4" fill="#FF6347"/><rect x="520" y="296" width="6" height="4" fill="#FF6347"/><rect x="600" y="300" width="6" height="4" fill="#FF6347"/></g><rect x="0" y="340" width="800" height="60" fill="#1a1a2a"/><text x="400" y="395" text-anchor="middle" font-size="12" fill="#aaa" font-family="sans-serif">较场口夜市 · 深夜食堂</text></svg>`,
+
+  hotel: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400"><defs><linearGradient id="sky7" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a2a4a"/><stop offset="100%" stop-color="#2a3a5a"/></linearGradient></defs><rect width="800" height="400" fill="url(#sky7)"/><g opacity="0.3"><circle cx="300" cy="30" r="1" fill="#fff"/><circle cx="500" cy="50" r="1.5" fill="#fff"/><circle cx="150" cy="40" r="1" fill="#fff"/></g><g transform="translate(250,180)"><rect x="0" y="60" width="300" height="160" fill="#4a5a7a" rx="3"/><rect x="10" y="50" width="280" height="170" fill="#5a6a8a" rx="3"/><rect x="20" y="40" width="260" height="180" fill="#6a7a9a" rx="3"/><rect x="50" y="80" width="30" height="25" fill="#FFD700" opacity="0.6"/><rect x="100" y="80" width="30" height="25" fill="#FFD700" opacity="0.6"/><rect x="150" y="80" width="30" height="25" fill="#FFD700" opacity="0.6"/><rect x="200" y="80" width="30" height="25" fill="#FFD700" opacity="0.6"/><rect x="50" y="120" width="30" height="25" fill="#FFD700" opacity="0.4"/><rect x="100" y="120" width="30" height="25" fill="#FFD700" opacity="0.4"/><rect x="150" y="120" width="30" height="25" fill="#FFD700" opacity="0.4"/><rect x="200" y="120" width="30" height="25" fill="#FFD700" opacity="0.4"/><rect x="50" y="160" width="30" height="25" fill="#FFD700" opacity="0.3"/><rect x="100" y="160" width="30" height="25" fill="#FFD700" opacity="0.3"/><rect x="150" y="160" width="30" height="25" fill="#FFD700" opacity="0.3"/><rect x="200" y="160" width="30" height="25" fill="#FFD700" opacity="0.3"/><rect x="130" y="0" width="40" height="50" fill="#7a8aaa" rx="2"/></g><rect x="0" y="340" width="800" height="60" fill="#1a2a3a"/><text x="400" y="395" text-anchor="middle" font-size="12" fill="#8a9aaa" font-family="sans-serif">桔子酒店 · 解放碑洪崖洞</text></svg>`,
+
+  airport: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400"><defs><linearGradient id="sky8" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0a0a2e"/><stop offset="60%" stop-color="#1a1a4a"/><stop offset="100%" stop-color="#2a2a5a"/></linearGradient></defs><rect width="800" height="400" fill="url(#sky8)"/><circle cx="600" cy="40" r="15" fill="#fff" opacity="0.3"/><circle cx="600" cy="40" r="20" fill="#fff" opacity="0.1"/><g opacity="0.4"><circle cx="100" cy="30" r="1" fill="#fff"/><circle cx="300" cy="50" r="1.5" fill="#fff"/><circle cx="500" cy="25" r="1" fill="#fff"/></g><g transform="translate(200,200)"><rect x="0" y="40" width="400" height="80" fill="#3a4a6a" rx="4"/><rect x="20" y="30" width="360" height="90" fill="#4a5a7a" rx="4"/><rect x="40" y="20" width="320" height="100" fill="#5a6a8a" rx="4"/><rect x="60" y="10" width="280" height="110" fill="#6a7a9a" rx="4"/><rect x="80" y="0" width="240" height="120" fill="#7a8aaa" rx="4"/><rect x="100" y="-10" width="200" height="130" fill="#8a9aba" rx="4"/><rect x="150" y="-30" width="100" height="20" fill="#9aaaca" rx="2"/><rect x="180" y="-40" width="40" height="15" fill="#aabada" rx="2"/></g><g opacity="0.5"><rect x="100" y="280" width="600" height="3" fill="#FFD700"/><rect x="150" y="290" width="500" height="2" fill="#FFD700"/><rect x="200" y="300" width="400" height="1.5" fill="#FFD700"/></g><rect x="0" y="340" width="800" height="60" fill="#1a1a3a"/><text x="400" y="395" text-anchor="middle" font-size="12" fill="#8a9aaa" font-family="sans-serif">重庆江北国际机场 T3</text></svg>`,
+
+  train: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400"><defs><linearGradient id="sky9" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a2a4a"/><stop offset="100%" stop-color="#3a4a6a"/></linearGradient></defs><rect width="800" height="400" fill="url(#sky9)"/><g opacity="0.3"><circle cx="200" cy="40" r="1" fill="#fff"/><circle cx="500" cy="30" r="1.5" fill="#fff"/></g><g transform="translate(100,220)"><rect x="0" y="40" width="600" height="60" fill="#4a5a7a" rx="3"/><rect x="20" y="30" width="560" height="70" fill="#5a6a8a" rx="3"/><rect x="40" y="20" width="520" height="80" fill="#6a7a9a" rx="3"/><rect x="60" y="10" width="480" height="90" fill="#7a8aaa" rx="3"/><rect x="80" y="0" width="440" height="100" fill="#8a9aba" rx="3"/><rect x="120" y="-15" width="360" height="20" fill="#9aaaca" rx="2"/><rect x="200" y="-30" width="200" height="20" fill="#aabada" rx="2"/><rect x="250" y="-40" width="100" height="15" fill="#bacada" rx="2"/></g><g opacity="0.5"><rect x="0" y="290" width="800" height="3" fill="#4a6a8a"/><rect x="0" y="300" width="800" height="2" fill="#3a5a7a"/></g><rect x="0" y="340" width="800" height="60" fill="#1a2a3a"/><text x="400" y="395" text-anchor="middle" font-size="12" fill="#8a9aaa" font-family="sans-serif">重庆北站 · 高铁枢纽</text></svg>`,
+
+  restaurant: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400"><defs><linearGradient id="sky10" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a1a0a"/><stop offset="100%" stop-color="#4a2a1a"/></linearGradient></defs><rect width="800" height="400" fill="url(#sky10)"/><g opacity="0.3"><circle cx="400" cy="30" r="1.5" fill="#FFD700"/><circle cx="200" cy="50" r="1" fill="#FFD700"/><circle cx="600" cy="40" r="1" fill="#FFD700"/></g><g transform="translate(250,180)"><ellipse cx="150" cy="100" rx="150" ry="80" fill="#5a3a2a" opacity="0.6"/><ellipse cx="150" cy="90" rx="130" ry="70" fill="#6a4a3a" opacity="0.6"/><ellipse cx="150" cy="80" rx="110" ry="60" fill="#7a5a4a" opacity="0.6"/><ellipse cx="150" cy="70" rx="90" ry="50" fill="#8a6a5a" opacity="0.6"/><ellipse cx="150" cy="60" rx="70" ry="40" fill="#9a7a6a" opacity="0.6"/><ellipse cx="150" cy="50" rx="50" ry="30" fill="#aa8a7a" opacity="0.6"/><ellipse cx="150" cy="40" rx="30" ry="20" fill="#ba9a8a" opacity="0.6"/></g><g opacity="0.7"><circle cx="320" cy="250" r="8" fill="#FF6347"/><circle cx="380" cy="240" r="10" fill="#FFD700"/><circle cx="440" cy="245" r="7" fill="#32CD32"/><circle cx="360" cy="260" r="9" fill="#FF8C00"/><circle cx="410" cy="255" r="6" fill="#FF69B4"/></g><rect x="0" y="340" width="800" height="60" fill="#2a1a1a"/><text x="400" y="395" text-anchor="middle" font-size="12" fill="#aa8a7a" font-family="sans-serif">重庆美食 · 不辣也精彩</text></svg>`
+};
+
+// ══════════ DATA ══════════
 const HOTEL = {
   name: '桔子重庆解放碑洪崖洞江景酒店',
   lat: 29.5630,
@@ -236,10 +287,50 @@ const DAYS = [
     title: '深夜落地 · 洪崖洞夜景',
     color: '#ff9500',
     locations: [
-      { name: '重庆江北机场T3', lat: 29.7192, lng: 106.6417, type: 'transport', time: '22:25', desc: '天津航空 GS6582 杭州萧山→重庆江北，落地即走', gmap: '重庆江北国际机场T3' },
-      { name: '桔子解放碑洪崖洞江景酒店', lat: 29.5630, lng: 106.5780, type: 'hotel', time: '23:00', desc: '打车约40分钟，6人需2辆车。江景家庭房+江景大床房', gmap: '桔子酒店解放碑洪崖洞' },
-      { name: '洪崖洞夜景', lat: 29.5647, lng: 106.5812, type: 'spot', time: '23:00-00:00', desc: '步行3分钟即到。23:30熄灯前抓紧看！千厮门大桥上拍全景最佳。重庆名片级夜景', gmap: '洪崖洞' },
-      { name: '较场口夜市', lat: 29.5582, lng: 106.5750, type: 'food', time: '00:00+', desc: '夜宵：步行5分钟。老人可先回酒店休息。小吃街+烧烤+冰粉', gmap: '较场口夜市' }
+      {
+        name: '重庆江北机场T3', lat: 29.7192, lng: 106.6417, type: 'transport', time: '22:25',
+        desc: '天津航空 GS6582 杭州萧山→重庆江北，落地即走',
+        intro: '中国八大区域枢纽机场之一，T3航站楼以"比翼神鸟"为设计灵感，2017年启用。抵达层B2有网约车上车点，到解放碑约40分钟。',
+        hero: 'airport', emoji: '✈️',
+        detail: `<h4>✈️ 重庆江北国际机场</h4>
+          <p>中国八大区域枢纽机场之一，T3航站楼2017年启用，造型灵感来自"比翼神鸟"。</p>
+          <ul><li>抵达层有网约车上车点（B2层）</li><li>机场大巴末班约23:00，但6人打车更划算</li><li>到解放碑约40分钟，夜间打车费约80-100元/车</li></ul>
+          <div class="tip">6人需打2辆车，建议出航站楼前就用滴滴叫好</div>`,
+        gmap: '重庆江北国际机场T3'
+      },
+      {
+        name: '桔子解放碑洪崖洞江景酒店', lat: 29.5630, lng: 106.5780, type: 'hotel', time: '23:00',
+        desc: '打车约40分钟。江景家庭房+江景大床房，紧邻洪崖洞',
+        intro: '位于解放碑核心区，步行到洪崖洞仅3分钟。江景房可直接看到嘉陵江和千厮门大桥，楼下就是较场口夜市。江景家庭房¥493/晚。',
+        hero: 'hotel', emoji: '🏨',
+        detail: `<h4>🏨 桔子酒店（解放碑洪崖洞店）</h4>
+          <p>位于解放碑核心区，步行到洪崖洞仅3分钟。江景房可直接看到嘉陵江和千厮门大桥。</p>
+          <ul><li>江景家庭房：¥493/晚，适合3人</li><li>江景大床房：¥342/晚</li><li>楼下就是较场口夜市，夜宵方便</li><li>步行到解放碑步行街约5分钟</li></ul>
+          <div class="tip">23:00后到店建议提前联系前台保留房间</div>`,
+        gmap: '桔子酒店解放碑洪崖洞'
+      },
+      {
+        name: '洪崖洞夜景', lat: 29.5647, lng: 106.5812, type: 'spot', time: '23:00-00:00',
+        desc: '步行3分钟。23:30熄灯前抓紧看！千厮门大桥上拍全景最佳',
+        intro: '重庆最具标志性的夜景地标，被誉为"现实版千与千寻"。依山而建的吊脚楼建筑群共11层，暖黄色灯光层层叠叠，倒映在嘉陵江上如梦似幻。',
+        hero: 'hongyadong', emoji: '🌃',
+        detail: `<h4>🌃 洪崖洞 — 现实版"千与千寻"</h4>
+          <p>重庆最具标志性的夜景地标。依山而建的吊脚楼建筑群，共11层，暖黄色灯光层层叠叠，被誉为"现实版千与千寻"。</p>
+          <ul><li><strong>最佳拍摄点：</strong>千厮门大桥上（步行3分钟），拍洪崖洞全景</li><li><strong>次选机位：</strong>洪崖洞对岸的嘉陵江滨江路</li><li><strong>熄灯时间：</strong>约23:30（夏季可能延至00:00）</li><li><strong>注意：</strong>老人不建议进洪崖洞内部（人多+楼梯多），外围看就够了</li></ul>
+          <div class="tip">22:25落地+40分钟车程，到酒店约23:00，还有30分钟看夜景，时间刚好</div>`,
+        gmap: '洪崖洞'
+      },
+      {
+        name: '较场口夜市', lat: 29.5582, lng: 106.5750, type: 'food', time: '00:00+',
+        desc: '夜宵：步行5分钟。老人可先回酒店休息。小吃街+烧烤+冰粉+酸辣粉',
+        intro: '重庆最老牌的夜市之一，紧邻解放碑。好又来酸辣粉、山城汤圆、烤脑花、冰粉凉虾……营业到凌晨2-3点，是山城深夜的灵魂所在。',
+        hero: 'jiaochangkou', emoji: '🍢',
+        detail: `<h4>🍢 较场口夜市 — 深夜食堂</h4>
+          <p>重庆最老牌的夜市之一，紧邻解放碑。小吃种类丰富，营业到凌晨2-3点。</p>
+          <ul><li><strong>推荐：</strong>好又来酸辣粉（微辣版）、山城汤圆、烤脑花、冰粉凉虾</li><li><strong>不辣选择：</strong>红糖糍粑、醪糟汤圆、烤玉米、锅巴土豆（原味）</li><li><strong>老人：</strong>建议先回酒店休息，年轻人出来逛</li></ul>
+          <div class="tip">八一好吃街也在步行范围内，但较场口更本地化、游客少</div>`,
+        gmap: '较场口夜市'
+      }
     ]
   },
   {
@@ -249,13 +340,83 @@ const DAYS = [
     title: '解放碑 → 南滨路 → 高铁去成都',
     color: '#007aff',
     locations: [
-      { name: '解放碑步行街', lat: 29.5606, lng: 106.5767, type: 'spot', time: '09:00', desc: '重庆地标，平地步行。周边商圈+国泰艺术中心。老人轻松逛', gmap: '解放碑步行街' },
-      { name: '朝天门来福士', lat: 29.5678, lng: 106.5855, type: 'spot', time: '10:00', desc: '步行可达，看两江交汇（长江+嘉陵江）。来福士商场有空调，老人休息方便', gmap: '重庆来福士' },
-      { name: '慈记外婆桥', lat: 29.5610, lng: 106.5755, type: 'food', time: '12:00', desc: '⭐ 午餐推荐：不辣特色川菜多，菌汤味道不错。老人友好+不吃辣首选。311赞小红书推荐', budget: '人均60-80元', gmap: '慈记外婆桥 解放碑' },
-      { name: '南滨路江边步道', lat: 29.5500, lng: 106.5850, type: 'spot', time: '14:00', desc: '打车约20分钟。平地江边步道，老人友好。隔江看渝中半岛全景，下午光线好', gmap: '南滨路' },
-      { name: '长嘉汇弹子石老街', lat: 29.5800, lng: 106.5950, type: 'spot', time: '16:30', desc: '两江交汇观景平台，看日落+华灯初上。有电梯，老人不用爬坡', gmap: '长嘉汇弹子石老街' },
-      { name: '藕然间', lat: 29.5570, lng: 106.5730, type: 'food', time: '17:30', desc: '⭐ 晚餐推荐：藕汤浓郁，清汤锅底。较场口附近，6人汤锅合适。吃完打车去重庆北站约30分钟', budget: '人均50-70元', gmap: '藕然间 较场口' },
-      { name: '重庆北站', lat: 29.6100, lng: 106.5475, type: 'transport', time: '18:30出发', desc: '推荐 G8690 19:04→20:26 成都东。备选：G8694 19:30 / G8696 20:15', gmap: '重庆北站' }
+      {
+        name: '解放碑步行街', lat: 29.5606, lng: 106.5767, type: 'spot', time: '09:00',
+        desc: '重庆地标，全国唯一纪念抗战胜利的纪念碑。平地步行，老人轻松',
+        intro: '全称"抗战胜利纪功碑暨人民解放纪念碑"，1947年落成，是中国唯一纪念抗战胜利的纪念碑。高27.5米，矗立在重庆最繁华的商业中心十字路口。',
+        hero: 'jiefangbei', emoji: '🏛️',
+        detail: `<h4>🏛️ 解放碑 — 重庆的心脏</h4>
+          <p>全称"抗战胜利纪功碑暨人民解放纪念碑"，1947年落成，是中国唯一一座纪念中华民族抗日战争胜利的纪念碑。高27.5米，位于重庆最繁华的商业中心十字路口。</p>
+          <ul><li><strong>看点：</strong>碑体本身的历史感 + 四周现代高楼的强烈对比</li><li><strong>周边：</strong>国泰艺术中心（筷子楼造型）、WFC环球金融中心（73楼观景台，但老人不建议）</li><li><strong>拍照：</strong>站在碑下仰拍，或在对角线马路口拍碑+高楼同框</li><li><strong>老人友好：</strong>全程平地，有座椅可休息</li></ul>
+          <div class="tip">早上9点人少，拍照不用挤。逛完沿民族路步行10分钟到朝天门</div>`,
+        gmap: '解放碑步行街'
+      },
+      {
+        name: '朝天门来福士', lat: 29.5678, lng: 106.5855, type: 'spot', time: '10:00',
+        desc: '步行可达。看两江交汇奇观（长江+嘉陵江），来福士商场有空调老人休息方便',
+        intro: '由新加坡金沙酒店设计师摩西·萨夫迪操刀，8栋塔楼+300米空中连廊。位于长江与嘉陵江交汇处，可看到"鸳鸯锅"——长江浑黄、嘉陵江清绿，泾渭分明。',
+        hero: 'chaotianmen', emoji: '🌊',
+        detail: `<h4>🌊 朝天门来福士 — 两江交汇</h4>
+          <p>重庆来福士由新加坡金沙酒店同款设计师摩西·萨夫迪设计，8栋塔楼+300米空中连廊"水晶连廊"。位于长江与嘉陵江交汇处，可看到两江清浊分明的奇观。</p>
+          <ul><li><strong>必看：</strong>两江交汇——长江水浑黄、嘉陵江水清绿，交汇处形成明显分界线</li><li><strong>最佳观景点：</strong>来福士商场外的朝天门广场（免费）</li><li><strong>商场内：</strong>有空调、座椅、卫生间，老人累了可进去休息</li><li><strong>水晶连廊：</strong>需购票（约180元），老人不建议，广场看就够了</li></ul>
+          <div class="tip">解放碑步行到朝天门约10-15分钟，全程平路下坡，老人慢慢走没问题</div>`,
+        gmap: '重庆来福士'
+      },
+      {
+        name: '慈记外婆桥', lat: 29.5610, lng: 106.5755, type: 'food', time: '12:00',
+        desc: '⭐ 午餐推荐：不辣特色川菜多，菌汤味道不错。老人友好+不吃辣首选',
+        intro: '解放碑附近的老牌餐厅，以不辣的特色川菜和菌汤闻名。招牌菌汤锅清淡鲜美，粉蒸肉、蒜泥白肉、糯米排骨都是经典。人均60-80元，家庭聚餐首选。',
+        hero: 'restaurant', emoji: '🥘',
+        detail: `<h4>🥘 慈记外婆桥 — 不辣川菜代表</h4>
+          <p>解放碑附近的老牌餐厅，以不辣的特色川菜和菌汤闻名。311赞小红书笔记实测推荐。</p>
+          <ul><li><strong>招牌：</strong>菌汤锅（清淡鲜美）、粉蒸肉、蒜泥白肉（可去辣）、糯米排骨</li><li><strong>素食选择：</strong>清炒时蔬、菌汤涮素菜、凉拌木耳、蒸南瓜</li><li><strong>人均：</strong>60-80元，6人约400-500元</li><li><strong>环境：</strong>家常风格，有圆桌，适合家庭聚餐</li></ul>
+          <div class="tip">提前电话确认是否有大桌，6人建议11:30前到避开午高峰</div>`,
+        budget: '人均60-80元', gmap: '慈记外婆桥 解放碑'
+      },
+      {
+        name: '南滨路江边步道', lat: 29.5500, lng: 106.5850, type: 'spot', time: '14:00',
+        desc: '打车约20分钟。平地江边步道，老人友好。隔江看渝中半岛全景，下午光线好',
+        intro: '重庆最美的滨江大道，全长约25公里，被誉为"重庆外滩"。隔江正对渝中半岛，下午顺光拍摄解放碑CBD、来福士、洪崖洞全景，光线通透。',
+        hero: 'nanbinlu', emoji: '🌉',
+        detail: `<h4>🌉 南滨路 — 重庆的"外滩"</h4>
+          <p>南滨路是重庆最美的滨江大道，全长约25公里。隔江正对渝中半岛，是观赏重庆天际线的最佳位置。被誉为"重庆外滩"。</p>
+          <ul><li><strong>看点：</strong>隔江看解放碑CBD、来福士、洪崖洞全景</li><li><strong>下午优势：</strong>顺光拍摄渝中半岛，光线通透</li><li><strong>老人友好：</strong>全程平地步道，有长椅可休息，江风凉爽</li><li><strong>拍照点：</strong>烟雨公园附近、南滨公园段</li></ul>
+          <div class="tip">下午2-4点光线最好，拍渝中半岛城市天际线绝佳。走到长嘉汇约30分钟，也可以打车</div>`,
+        gmap: '南滨路'
+      },
+      {
+        name: '长嘉汇弹子石老街', lat: 29.5800, lng: 106.5950, type: 'spot', time: '16:30',
+        desc: '两江交汇观景平台，看日落+华灯初上。有电梯，老人不用爬坡',
+        intro: '位于南滨路东端，正对两江交汇处，是观赏"鸳鸯锅"的最佳位置。日落时分夕阳从渝中半岛背后落下，华灯初上时对岸灯光璀璨——这是行程的夜景高潮点！',
+        hero: 'changjiahui', emoji: '🌆',
+        detail: `<h4>🌆 长嘉汇弹子石老街 — 两江交汇最佳观景台</h4>
+          <p>位于南滨路东端，正对两江交汇处，是重庆观赏"鸳鸯锅"（长江+嘉陵江交汇）的最佳位置。弹子石老街保留了重庆传统坡地建筑风貌，但有电梯上下。</p>
+          <ul><li><strong>核心看点：</strong>两江交汇观景平台——正对朝天门来福士，看长江浑黄+嘉陵江清绿交汇</li><li><strong>日落时刻：</strong>约19:30-20:00，夕阳从渝中半岛背后落下，天空从橙红渐变到深蓝</li><li><strong>华灯初上：</strong>约20:00后，对岸渝中半岛灯光亮起，城市夜景绝美</li><li><strong>老人友好：</strong>有电梯连接各层，不用爬坡。观景平台有座椅</li></ul>
+          <div class="tip">这是行程的夜景高潮点！下午4:30到，先逛老街，然后等日落+夜景，大约6:30-7:00离开去吃晚饭</div>`,
+        gmap: '长嘉汇弹子石老街'
+      },
+      {
+        name: '藕然间', lat: 29.5570, lng: 106.5730, type: 'food', time: '17:30',
+        desc: '⭐ 晚餐推荐：藕汤浓郁，清汤锅底。较场口附近，6人汤锅合适',
+        intro: '以藕汤闻名的重庆本地餐厅，清汤锅底完全不辣。藕汤浓郁鲜甜，涮牛肉、涮时蔬、藕夹都是招牌。人均50-70元，特别适合不吃辣的家庭聚餐。',
+        hero: 'restaurant', emoji: '🍲',
+        detail: `<h4>🍲 藕然间 — 藕汤专门店</h4>
+          <p>以藕汤闻名的重庆本地餐厅，清汤锅底完全不辣。311赞小红书笔记推荐，特别适合不吃辣的家庭聚餐。</p>
+          <ul><li><strong>招牌：</strong>藕汤锅底（浓郁鲜甜）、涮牛肉、涮时蔬、藕夹</li><li><strong>素食：</strong>藕汤本身素底，可涮各种素菜——藕片、土豆、豆腐、菌菇拼盘</li><li><strong>人均：</strong>50-70元，6人约300-400元</li><li><strong>位置：</strong>较场口地铁站附近，注意出口容易走错</li></ul>
+          <div class="tip">吃完打车去重庆北站约30分钟，建议18:30前结束晚餐</div>`,
+        budget: '人均50-70元', gmap: '藕然间 较场口'
+      },
+      {
+        name: '重庆北站', lat: 29.6100, lng: 106.5475, type: 'transport', time: '18:30出发',
+        desc: '推荐 G8690 19:04→20:26 成都东。备选：G8694 19:30 / G8696 20:15',
+        intro: '重庆最主要的铁路枢纽之一，北广场为高铁/动车主要发车区。到成都东站约1.5小时，推荐G8690次19:04发车，二等座约168元。',
+        hero: 'train', emoji: '🚄',
+        detail: `<h4>🚄 重庆北站 — 去成都</h4>
+          <p>重庆最主要的铁路枢纽之一，北广场为高铁/动车主要发车区。到成都东站约1.5小时。</p>
+          <ul><li><strong>推荐车次：</strong>G8690 19:04→20:26（1h22m，二等座~168元）</li><li><strong>备选：</strong>G8694 19:30 / G8696 20:15</li><li><strong>从解放碑出发：</strong>打车约30分钟，建议18:00-18:30出发</li><li><strong>6人票：</strong>建议提前在12306 APP购买，选连座</li></ul>
+          <div class="tip">重庆北站北广场和南广场不互通，确认车次从哪个广场进站。高铁一般在北广场</div>`,
+        gmap: '重庆北站'
+      }
     ]
   }
 ];
@@ -274,10 +435,10 @@ function overviewContent() {
 
 <div class="section-head">🚄 高铁备选（6/26 重庆→成都东）</div>
 <div class="pay-summary">
-  <table style="width:100%;font-size:12px;border-collapse:collapse;">
-    <tr style="font-weight:700;color:var(--text-primary)"><td>发车</td><td>站</td><td>抵达</td><td>车次</td><td>用时</td><td>二等座</td></tr>
+  <table>
+    <tr><th>发车</th><th>站</th><th>抵达</th><th>车次</th><th>用时</th><th>二等座</th></tr>
     <tr><td>18:37</td><td>重庆北</td><td>19:54</td><td>G8688</td><td>1h17m</td><td>~168</td></tr>
-    <tr style="background:rgba(232,83,46,.08)"><td>19:04 ⭐</td><td>重庆北</td><td>20:26</td><td>G8690</td><td>1h22m</td><td>~168</td></tr>
+    <tr class="highlight"><td>19:04 ⭐</td><td>重庆北</td><td>20:26</td><td>G8690</td><td>1h22m</td><td>~168</td></tr>
     <tr><td>19:30</td><td>重庆北</td><td>20:52</td><td>G8694</td><td>1h22m</td><td>~168</td></tr>
     <tr><td>20:15</td><td>重庆北</td><td>21:38</td><td>G8696</td><td>1h23m</td><td>~168</td></tr>
     <tr><td>20:50</td><td>重庆西</td><td>22:05</td><td>G8640</td><td>1h15m</td><td>~153</td></tr>
@@ -406,7 +567,7 @@ map.on('locationfound', e => {
   if (locMarker) { locMarker.setLatLng(e.latlng); locCircle.setLatLng(e.latlng).setRadius(r); }
   else {
     locMarker = L.marker(e.latlng, {
-      icon: L.divIcon({ className:'', html:'<div style="width:14px;height:14px;border-radius:50%;background:#007aff;border:2.5px solid #fff;box-shadow:0 0 6px rgba(0,122,255,.5)"></div><div class="loc-pulse" style="position:absolute;top:0;left:0"></div>', iconSize:[14,14], iconAnchor:[7,7] }),
+      icon: L.divIcon({ className:'', html:'<div style="width:14px;height:14px;border-radius:50%;background:#007aff;border:2.5px solid #fff;box-shadow:0 0 6px rgba(0,122,255,.5)"></div>', iconSize:[14,14], iconAnchor:[7,7] }),
       zIndexOffset: 2000
     }).addTo(map);
     locCircle = L.circle(e.latlng, { radius: r, color: '#007aff', fillColor: '#007aff', fillOpacity: .08, weight: 1 }).addTo(map);
@@ -454,21 +615,6 @@ function showDay(idx) {
   if(coords.length) map.fitBounds(coords, { padding:[40,40], maxZoom:14 });
 }
 
-function payChips(pay) {
-  if(!pay) return '';
-  let h = '<div class="pays">';
-  const m = { cash:'💴现金', card:'💳刷卡', alipay:'支付宝', wechat:'微信' };
-  for(const [k,label] of Object.entries(m)) {
-    if(pay[k]!==undefined) { const c = pay[k]===1?'ok':pay[k]===0.5?'idk':'no'; h += `<span class="pay ${c}">${label}</span>`; }
-  }
-  return h+'</div>';
-}
-
-const IN_APP_WEBVIEW = (() => {
-  const ua = (navigator.userAgent || '').toLowerCase();
-  return /micromessenger|xhs|xhsdiscover|discover\/|tiktok|aweme|weibo|qq\/|qqbrowser|alipayclient|dingtalk|lark|feishu|ucbrowser|baiduboxapp|toutiao|newsarticle/.test(ua);
-})();
-
 function openAS(name, lat, lng, gmapQ) {
   const overlay = document.createElement('div');
   overlay.className = 'as-overlay show';
@@ -502,19 +648,22 @@ function renderDay(idx) {
   html += `<div class="route-bar">${day.locations.map((l,i)=>`<strong>${l.time}</strong> → ${l.name}`).join('\n')}</div>`;
   html += `<div class="timeline">`;
   day.locations.forEach(l => {
+    const hasHero = !!l.hero;
+    const svgContent = SVGS[l.hero] || '';
     html += `<div class="tl-item">
       <div class="tl-dot ${l.type}"></div>
-      <div class="card" onclick="this.querySelector('.details').classList.toggle('closed')">
+      <div class="card${hasHero?' has-hero':''}">
+        ${hasHero?`<div class="spot-hero">${svgContent}<span class="spot-emoji">${l.emoji||''}</span></div>`:''}
         <div class="time">${l.time}</div>
         <div class="name">${l.name} <span class="badge ${l.type}">${l.type==='food'?'餐厅':l.type==='spot'?'景点':l.type==='hotel'?'酒店':'交通'}</span></div>
         <div class="desc">${l.desc}</div>
+        ${l.intro?`<div class="intro">${l.intro}</div>`:''}
         ${l.budget?`<div class="budget">${l.budget}</div>`:''}
-        ${payChips(l.pay)}
+        ${l.detail?`<div class="spot-detail">${l.detail}</div>`:''}
         <div class="links">
-          <button class="btn nav" onclick="event.stopPropagation();openAS('${l.name.replace(/'/g,"\\'")}',${l.lat},${l.lng},'${l.gmap||encodeURIComponent(l.name+' 重庆')}')">📍 导航</button>
-          ${l.xhs?`<a class="btn xhs" href="${l.xhs}" target="_blank" onclick="event.stopPropagation()">📕 小红书</a>`:''}
+          <button class="btn nav" onclick="openAS('${l.name.replace(/'/g,"\\'")}',${l.lat},${l.lng},'${l.gmap||encodeURIComponent(l.name+' 重庆')}')">📍 导航</button>
+          ${l.xhs?`<a class="btn xhs" href="${l.xhs}" target="_blank">📕 小红书</a>`:''}
         </div>
-        ${l.detail?`<div class="details closed">${l.detail.replace(/\n/g,'<br>')}</div>`:''}
       </div>
     </div>`;
   });
